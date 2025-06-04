@@ -25,6 +25,9 @@
 #ifdef __SWITCH__
 #include "switch_impl.h"
 #endif
+#ifdef __VITA__
+#include "platform/vita/src/vita_impl.h"
+#endif
 
 static void playAudio(Snes *snes, SDL_AudioDeviceID device, int16_t *audioBuffer);
 static void renderScreen(Snes *snes, SDL_Renderer *renderer, SDL_Texture *texture);
@@ -163,6 +166,8 @@ static SDL_HitTestResult HitTestCallback(SDL_Window *win, const SDL_Point *pt, v
 }
 
 void RtlDrawPpuFrame(uint8 *pixel_buffer, size_t pitch, uint32 render_flags) {
+  if(pixel_buffer == NULL)
+    return;
   uint8 *ppu_pixels = g_other_image ? g_my_pixels : g_pixels;
   for (size_t y = 0; y < 240; y++)
     memcpy((uint8_t *)pixel_buffer + y * pitch, ppu_pixels + y * 256 * 4, 256 * 4);
@@ -282,6 +287,10 @@ static void SdlRenderer_Destroy(void) {
   SDL_DestroyRenderer(g_renderer);
 }
 
+static void SdlRenderer_BeforeFrame(void** ptr) {
+
+}
+
 static void SdlRenderer_BeginDraw(int width, int height, uint8 **pixels, int *pitch) {
   g_sdl_renderer_rect.w = width;
   g_sdl_renderer_rect.h = height;
@@ -305,6 +314,7 @@ static void SdlRenderer_EndDraw(void) {
 static const struct RendererFuncs kSdlRendererFuncs = {
   &SdlRenderer_Init,
   &SdlRenderer_Destroy,
+  &SdlRenderer_BeforeFrame,
   &SdlRenderer_BeginDraw,
   &SdlRenderer_EndDraw,
 };
@@ -315,6 +325,9 @@ static const struct RendererFuncs kSdlRendererFuncs = {
 int main(int argc, char** argv) {
 #ifdef __SWITCH__
   SwitchImpl_Init();
+#endif
+#ifdef __VITA__
+    VitaImpl_Init();
 #endif
   argc--, argv++;
   const char *config_file = NULL;
@@ -367,12 +380,16 @@ int main(int argc, char** argv) {
   int window_width = custom_size ? g_config.window_width : g_current_window_scale * g_snes_width;
   int window_height = custom_size ? g_config.window_height : g_current_window_scale * g_snes_height;
 
+#ifdef __VITA__
+    VitaRenderer_Create(&g_renderer_funcs);
+#else
   if (g_config.output_method == kOutputMethod_OpenGL) {
     g_win_flags |= SDL_WINDOW_OPENGL;
     OpenGLRenderer_Create(&g_renderer_funcs);
   } else {
     g_renderer_funcs = kSdlRendererFuncs;
   }
+#endif
 
   // init snes, load rom
   const char* filename = argv[0] ? argv[0] : "sm.smc";
@@ -507,8 +524,9 @@ int main(int argc, char** argv) {
       g_gamepad_buttons = 0;
     inputs |= g_gamepad_buttons;
 
-    uint8 is_replay = RtlRunFrame(inputs);
+    g_renderer_funcs.BeforeFrame((void**)&snes->ppu->renderBuffer);
 
+    uint8 is_replay = RtlRunFrame(inputs);
     frameCtr++;
     g_snes->disableRender = (g_turbo ^ (is_replay & g_replay_turbo)) && (frameCtr & (g_turbo ? 0xf : 0x7f)) != 0;
 
@@ -526,7 +544,6 @@ int main(int argc, char** argv) {
         SDL_SetWindowTitle(g_window, kWindowTitle);
       }
     }
-
     // if vsync isn't working, delay manually
     curTick = SDL_GetTicks();
 

@@ -245,8 +245,8 @@ void ppu_handleVblank(Ppu* ppu) {
 }
 
 static inline void ClearBackdrop(PpuPixelPrioBufs *buf) {
-  for (size_t i = 0; i != arraysize(buf->data); i += 4)
-    *(uint64*)&buf->data[i] = 0x0500050005000500;
+  for (size_t i = 0; i != arraysize(buf->data); i += 1)
+      buf->data[i] = 0x0000;
 }
 
 void ppu_runLine(Ppu* ppu, int line) {

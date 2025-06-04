@@ -144,6 +144,9 @@ static bool OpenGLRenderer_Init(SDL_Window *window) {
 static void OpenGLRenderer_Destroy(void) {
 }
 
+static void OpenGLRenderer_BeforeFrame(void** ptr) {
+}
+
 static void OpenGLRenderer_BeginDraw(int width, int height, uint8 **pixels, int *pitch) {
   int size = width * height;
 
@@ -207,6 +210,7 @@ static void OpenGLRenderer_EndDraw(void) {
 static const struct RendererFuncs kOpenGLRendererFuncs = {
   &OpenGLRenderer_Init,
   &OpenGLRenderer_Destroy,
+  &OpenGLRenderer_BeforeFrame,
   &OpenGLRenderer_BeginDraw,
   &OpenGLRenderer_EndDraw,
 };

@@ -14,7 +14,11 @@
 void RtlRunFrameCompare(uint16 input, int run_what);
 
 enum RunMode { RM_BOTH, RM_MINE, RM_THEIRS };
+#ifdef __VITA__
+uint8 g_runmode = RM_MINE;
+#else
 uint8 g_runmode = RM_BOTH;
+#endif
 
 extern int g_got_mismatch_count;
 

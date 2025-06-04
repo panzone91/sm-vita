@@ -8,6 +8,7 @@ typedef struct SDL_Window SDL_Window;
 struct RendererFuncs {
   bool (*Initialize)(SDL_Window *window);
   void (*Destroy)();
+  void (*BeforeFrame)(void** buffer);
   void (*BeginDraw)(int width, int height, uint8 **pixels, int *pitch);
   void (*EndDraw)();
 };
