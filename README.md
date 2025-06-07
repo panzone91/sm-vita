@@ -2,8 +2,8 @@
 
 This is a (work in progress) porting of [sm](https://github.com/snesrev/sm) project on the Vita console.
 
-- For building, check [BUILDING.md](BUILDING.md)
-- For more details, check the Vita-specific [README](src/platform/vita/README.md)
+- For building, check [BUILDING.md](BUILDING.md#playstation-vita)
+- For more details on how to run it, check the Vita-specific [README](src/platform/vita/README.md)
 
 # sm
 

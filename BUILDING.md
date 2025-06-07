@@ -102,15 +102,9 @@ Dependencies and requirements:
 
 * [VitaSDK](https://vitasdk.org/)
 
-1. Install VitaSDK with the standard libraries and configs
-2. CD to `vita` folder by typing `cd src/platfrom/vita` in the terminal on the `sm` root folder.
-3. Create a build folder `mkdir build`
+1. Install VitaSDK and SDL2 (included automatically in the standard installation of VitaSDK)
+2. CD to `vita` folder by typing `cd src/platform/vita` in the terminal on the `sm` root folder.
+3. Create a build folder and enter it `mkdir -p build && cd build`
 4. type `cmake ..` to create the makefile for Vita adapted to your development configuration.
 5. type `make` to compile the Vita version.
 6. Transfer the `sm.vpk` to your Vita and install it with VitaShell or your favorite installer.
-
-**OPTIONAL STEP**
-
-```sh
-make -j$(nproc) # To build using all cores
-```

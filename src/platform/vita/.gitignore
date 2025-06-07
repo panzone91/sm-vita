@@ -1,11 +1,1 @@
-Makefile
-*.bin
-cmake*
-CMake*
-*.self
-*.self.out
-*.velf
-*.vpk
-*.vpk.out
-*.sfo
-sm
+build/
